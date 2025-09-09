@@ -3,7 +3,9 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import ChatInterface from '@/components/ChatInterface';
 import heroBackground from '@/assets/hero-bg.jpg';
-import { Brain, Database, Search, Zap } from 'lucide-react';
+import { Brain, Database, Search, Zap, Plus } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 const Index = () => {
   return (
@@ -41,7 +43,15 @@ const Index = () => {
                   <span>Real-time Analysis</span>
                 </Badge>
               </div>
-              <p className="text-sm opacity-75 max-w-2xl mx-auto">
+              <div className="mt-6">
+                <Link to="/add-findings">
+                  <Button variant="molecular" size="lg" className="gap-2">
+                    <Plus className="h-4 w-4" />
+                    Add New Findings
+                  </Button>
+                </Link>
+              </div>
+              <p className="text-sm opacity-75 max-w-2xl mx-auto mt-4">
                 Advanced drug discovery platform combining retrieval-augmented generation 
                 with biomedical knowledge graphs for intelligent research assistance
               </p>
