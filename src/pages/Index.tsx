@@ -3,45 +3,32 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import ChatInterface from '@/components/ChatInterface';
 import heroBackground from '@/assets/hero-bg.jpg';
-import { Brain, Database, Search, Zap, Plus, LogIn, LogOut } from 'lucide-react';
+import { Brain, Database, Search, Zap, Plus, LogOut } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 const Index = () => {
   const navigate = useNavigate();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [username, setUsername] = useState("");
 
   useEffect(() => {
     // Check authentication status
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate('/login');
-      } else {
-        setIsAuthenticated(true);
-      }
+    const isLoggedIn = localStorage.getItem("isAuthenticated");
+    const storedUsername = localStorage.getItem("username");
+    
+    if (isLoggedIn !== "true") {
+      navigate('/login');
+    } else {
+      setUsername(storedUsername || "User");
       setIsLoading(false);
-    };
-
-    checkAuth();
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (!session) {
-        navigate('/login');
-      } else {
-        setIsAuthenticated(true);
-      }
-    });
-
-    return () => subscription.unsubscribe();
+    }
   }, [navigate]);
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
+  const handleLogout = () => {
+    localStorage.removeItem("isAuthenticated");
+    localStorage.removeItem("username");
     toast.success('Logged out successfully');
     navigate('/login');
   };
