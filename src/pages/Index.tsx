@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import ChatInterface from '@/components/ChatInterface';
 import heroBackground from '@/assets/hero-bg.jpg';
-import { Brain, Database, Search, Zap, Plus } from 'lucide-react';
+import { Brain, Database, Search, Zap, Plus, LogIn } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 
@@ -43,7 +43,13 @@ const Index = () => {
                   <span>Real-time Analysis</span>
                 </Badge>
               </div>
-              <div className="mt-6">
+              <div className="mt-6 flex gap-3 justify-center">
+                <Link to="/login">
+                  <Button variant="outline" size="lg" className="gap-2">
+                    <LogIn className="h-4 w-4" />
+                    Login
+                  </Button>
+                </Link>
                 <Link to="/add-findings">
                   <Button variant="molecular" size="lg" className="gap-2">
                     <Plus className="h-4 w-4" />
