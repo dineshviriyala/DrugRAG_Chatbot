@@ -1,13 +1,59 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import ChatInterface from '@/components/ChatInterface';
 import heroBackground from '@/assets/hero-bg.jpg';
-import { Brain, Database, Search, Zap, Plus, LogIn } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Brain, Database, Search, Zap, Plus, LogIn, LogOut } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const Index = () => {
+  const navigate = useNavigate();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Check authentication status
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate('/login');
+      } else {
+        setIsAuthenticated(true);
+      }
+      setIsLoading(false);
+    };
+
+    checkAuth();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!session) {
+        navigate('/login');
+      } else {
+        setIsAuthenticated(true);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast.success('Logged out successfully');
+    navigate('/login');
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-pulse text-muted-foreground">Loading...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-subtle">
       {/* Header */}
@@ -44,18 +90,16 @@ const Index = () => {
                 </Badge>
               </div>
               <div className="mt-6 flex gap-3 justify-center">
-                <Link to="/login">
-                  <Button variant="outline" size="lg" className="gap-2">
-                    <LogIn className="h-4 w-4" />
-                    Login
-                  </Button>
-                </Link>
                 <Link to="/add-findings">
                   <Button variant="molecular" size="lg" className="gap-2">
                     <Plus className="h-4 w-4" />
                     Add New Findings
                   </Button>
                 </Link>
+                <Button variant="outline" size="lg" className="gap-2" onClick={handleLogout}>
+                  <LogOut className="h-4 w-4" />
+                  Logout
+                </Button>
               </div>
               <p className="text-sm opacity-75 max-w-2xl mx-auto mt-4">
                 Advanced drug discovery platform combining retrieval-augmented generation 
